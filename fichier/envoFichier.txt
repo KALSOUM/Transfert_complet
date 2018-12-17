@@ -1,0 +1,31 @@
+<?php
+include 'connection.php';
+session_start();
+include_once ('logout.php');
+if (!empty($_FILES)) {
+    $file_name = $_FILES['imageImporter']['name'];
+    $file_extension = strrchr($file_name, ".");
+    $file_tmp_name = $_FILES['imageImporter']['tmp_name'];
+    $file_dest = 'files/'.$file_name;
+    $extension_autorisees = array('.png', '.PNG', '.jpg', '.JPG'); //Seul ces formats sont autorisés
+    if (in_array($file_extension, $extension_autorisees)) {
+        if(move_uploaded_file($file_tmp_name, $file_dest)) {
+            $requete = $bdd->prepare('INSERT INTO file(name, file_url) VALUES(?,?)');
+            $requete->execute(array($file_name, $file_dest));
+            echo "<script> alert ('Fichier envoyer avec succés')</script>";
+        }
+    }else {
+        echo " <script> alert ('seul les fichiers jpg png sont autorisés') </script>";
+    }
+
+}
+?>
+
+
+
+ <form action="accueil_user.php" method="post" enctype="multipart/form-data">
+       <div class="form-group">
+        <input type="file" name="imageImporter" id="imageImporter" > <br>
+        <input type="submit" id="Envoyerlefichier" name="Envoyerlefichier"  class="btn btn-default" value="Importer">
+       </div>
+  </form>
